@@ -1,6 +1,14 @@
-import { Controller, Post, UseGuards, Request, Get } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  UseGuards,
+  Request,
+  Get,
+  Patch,
+} from '@nestjs/common';
 
-import { LocalAuthGuard } from './auth/local-auth.guard';
+import { LocalAuthGuard } from './auth/guards/local-auth.guard';
+import { RefreshTokenGuard } from './auth/guards/refresh-token.guard';
 import { AuthService } from './auth/auth.service';
 import { Public } from './utils/decorators';
 
@@ -11,12 +19,23 @@ export class AppController {
   @UseGuards(LocalAuthGuard)
   @Post('auth/login')
   async login(@Request() req) {
+    /**
+     * @TODO
+     * send refresh token as cookie to client
+     */
     return this.authService.login(req.user);
   }
 
-  @Get('test')
+  @Patch('test')
   test(@Request() req) {
-    console.log(req.user);
+    console.log('Patch test req.user', req.user);
     return 'test';
+  }
+
+  @Public()
+  @UseGuards(RefreshTokenGuard)
+  @Get('auth/accessToken')
+  getAccessToken(@Request() req) {
+    return this.authService.getAccessToken(req.user);
   }
 }

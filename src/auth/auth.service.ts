@@ -34,4 +34,28 @@ export class AuthService {
       access_token: this.jwtService.sign(payload),
     };
   }
+
+  async validateRefreshToken(
+    userId: number,
+    refreshToken: string,
+  ): Promise<boolean> {
+    try {
+      const { data: signedToken } = await firstValueFrom(
+        this.httpService.get(
+          `${USER_SERVICE_EP}/api/v1/user/${userId}/refreshToken`,
+        ),
+      );
+
+      const isValid = await compare(refreshToken, signedToken);
+      return isValid;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  getAccessToken(payload: any): string {
+    delete payload.iat;
+    delete payload.exp;
+    return this.jwtService.sign(payload);
+  }
 }

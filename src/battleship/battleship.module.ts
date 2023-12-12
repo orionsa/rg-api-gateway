@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { Transport, ClientsModule } from '@nestjs/microservices';
 
 import { BattleshipService } from './battleship.service';
+import { BattleshipGateway } from './battleship.gateway';
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { BattleshipService } from './battleship.service';
       },
     ]),
   ],
-  providers: [BattleshipService],
+  providers: [BattleshipGateway, BattleshipService],
   exports: [BattleshipService],
 })
 export class BattleshipModule {}

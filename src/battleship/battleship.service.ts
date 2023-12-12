@@ -1,6 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 
+// import { BattleshipGateway } from './battleship.gateway';
+
 @Injectable()
 export class BattleshipService {
   constructor(

@@ -20,6 +20,7 @@ export class BattleshipGateway implements OnGatewayInit, OnGatewayConnection {
 
   handleConnection(client: any) {
     console.log('client.id -> ', client.id);
+    this.bsService.handleNewConnection(client.id);
   }
 
   afterInit() {

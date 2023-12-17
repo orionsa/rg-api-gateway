@@ -5,21 +5,16 @@ import {
   Request,
   Get,
   Patch,
-  Body,
 } from '@nestjs/common';
 
 import { LocalAuthGuard } from './auth/guards/local-auth.guard';
 import { RefreshTokenGuard } from './auth/guards/refresh-token.guard';
 import { AuthService } from './auth/auth.service';
 import { Public } from './utils/decorators';
-import { BattleshipService } from './battleship/battleship.service';
 
 @Controller()
 export class AppController {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly bsService: BattleshipService,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
   @Public()
   @UseGuards(LocalAuthGuard)
   @Post('auth/login')
@@ -42,11 +37,5 @@ export class AppController {
   @Get('auth/accessToken')
   getAccessToken(@Request() req) {
     return this.authService.getAccessToken(req.user);
-  }
-
-  @Public()
-  @Post('event')
-  testEvent(@Body() data: any) {
-    this.bsService.test(data);
   }
 }

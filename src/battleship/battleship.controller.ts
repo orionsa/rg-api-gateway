@@ -1,17 +1,28 @@
-import { Controller } from '@nestjs/common';
-import { EventPattern, Payload } from '@nestjs/microservices';
+import { Controller, OnModuleInit } from '@nestjs/common';
+import {
+  Payload,
+  MessagePattern,
+  ClientKafka,
+  Client,
+} from '@nestjs/microservices';
 
+import { kafkaConfig } from '../utils/kafkaConfig';
+import { BattleshipService } from './battleship.service';
+import { IJoinMatchRes } from './battleship.interface';
 @Controller()
-export class BattleShipController {
-  @EventPattern('bs_game.join.res')
-  handleJoinGame(
-    @Payload() data: { sockedId: string; playerId: string; matchId: string },
-  ) {
-    console.log('data!!!! -> ', data);
+export class BattleShipController implements OnModuleInit {
+  @Client(kafkaConfig)
+  client: ClientKafka;
+  constructor(private readonly bsService: BattleshipService) {}
+
+  onModuleInit() {
+    // this.client.subscribeToResponseOf('test_event');
   }
 
-  @EventPattern('test_event.res')
-  handleTestEvent(@Payload() data: any) {
-    console.log('test_event.res!!!!! => ', data);
+  @MessagePattern('bs_game.join')
+  handleJoinMatchApproved(
+    @Payload() { matchId, socketId, playerId }: IJoinMatchRes,
+  ) {
+    this.bsService.joinMatchApproved({ matchId, socketId, playerId });
   }
 }

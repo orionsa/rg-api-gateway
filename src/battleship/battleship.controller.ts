@@ -1,4 +1,4 @@
-import { Controller, OnModuleInit } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import {
   Payload,
   MessagePattern,
@@ -7,22 +7,15 @@ import {
 } from '@nestjs/microservices';
 
 import { kafkaConfig } from '../utils/kafkaConfig';
-import { BattleshipService } from './battleship.service';
-import { IJoinMatchRes } from './battleship.interface';
+// import { BattleshipService } from './battleship.service';
+// import { IJoinMatchRes } from './battleship.interface';
 @Controller()
-export class BattleShipController implements OnModuleInit {
+export class BattleShipController {
   @Client(kafkaConfig)
   client: ClientKafka;
-  constructor(private readonly bsService: BattleshipService) {}
 
-  onModuleInit() {
-    // this.client.subscribeToResponseOf('test_event');
-  }
-
-  @MessagePattern('bs_game.join')
-  handleJoinMatchApproved(
-    @Payload() { matchId, socketId, playerId }: IJoinMatchRes,
-  ) {
-    this.bsService.joinMatchApproved({ matchId, socketId, playerId });
+  @MessagePattern('bs_game.action')
+  handleAction(@Payload() payload: any) {
+    console.log('bs_game.action payload ', payload);
   }
 }

@@ -1,19 +1,20 @@
-import { BattleshipService } from './battleship.service';
-
 import {
   SubscribeMessage,
   WebSocketGateway,
   MessageBody,
   OnGatewayConnection,
 } from '@nestjs/websockets';
+import { Socket } from 'socket.io';
+
+import { BattleshipService } from './battleship.service';
 import { IJsonObject } from './battleship.interface';
 @WebSocketGateway()
 export class BattleshipGateway implements OnGatewayConnection {
   constructor(private readonly bsService: BattleshipService) {}
 
-  handleConnection(client: any) {
-    console.log('client.id -> ', client.id);
-    this.bsService.joinMatchRequest(client.id);
+  handleConnection(socket: Socket) {
+    this.bsService.addNewSocket(socket.id, socket);
+    this.bsService.joinMatchRequest(socket.id);
   }
 
   @SubscribeMessage('game_action')
